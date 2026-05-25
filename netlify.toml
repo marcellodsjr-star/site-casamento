@@ -1,0 +1,83 @@
+# Netlify Configuration File
+# Documentação: https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  # Comando para fazer build do projeto
+  command = "npm run build"
+  
+  # Diretório onde os arquivos estáticos são gerados
+  publish = "dist"
+  
+  # Diretório de funções serverless (opcional)
+  functions = "netlify/functions"
+
+[dev]
+  # Comando para desenvolvimento local
+  command = "npm run dev"
+  
+  # Porta para servidor de desenvolvimento
+  port = 3000
+  
+  # Diretório para servir
+  publish = "dist"
+
+# Redirects - Redireciona todas as rotas para index.html (SPA)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers de Segurança
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Protege contra clickjacking
+    X-Frame-Options = "SAMEORIGIN"
+    
+    # Protege contra MIME type sniffing
+    X-Content-Type-Options = "nosniff"
+    
+    # Protege contra XSS
+    X-XSS-Protection = "1; mode=block"
+    
+    # Política de Referrer
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    
+    # Content Security Policy
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.supabase.co https://api.manus.im"
+
+# Cache de Assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache de Fontes
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Sem Cache para HTML
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Variáveis de Ambiente (comentadas - configure no painel Netlify)
+# [context.production.environment]
+# VITE_SUPABASE_URL = "https://seu-projeto.supabase.co"
+# VITE_SUPABASE_ANON_KEY = "sua-chave-anonima"
+# VITE_APP_TITLE = "Casamento Thalita & Marcelo"
+
+# Configuração para Preview
+[context.deploy-preview]
+  command = "npm run build"
+
+# Configuração para Branch Deploy
+[context.branch-deploy]
+  command = "npm run build"
+
+# Configuração para Development
+[context.production]
+  command = "npm run build"
